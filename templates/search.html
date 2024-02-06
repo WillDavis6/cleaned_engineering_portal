@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<ul class="return-part">
+{% for key in key_set %}
+
+    <li class ="return-data">{{key}}: {{part_data.get(key)}}</li>
+
+{% endfor %}
+{% for img in images %}
+{% if 'KEY' in strimg%}
+<img src="{{inplant(img)}}">
+<li>{{img}}</li>
+{% else %}
+<img src="{{inplant(img)}}">
+<li>{{img}}</li>
+
+{% endif %}
+{% endfor %}
+
+</ul>
+{% endblock %}
+

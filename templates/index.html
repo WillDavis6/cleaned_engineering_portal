@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fictional Engineering Portal</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400&display=swap" rel="stylesheet">
+    
+
+
+</head>
+<body>
+<nav>
+    <div class="MSI">Fictional ENGINEERING PORTAL</div>
+    <div class="nav-links">
+        <a class='tech_data' href="#">Tech Data</a>
+        <a class='blueprint_ocr' href="#">Blueprint OCR</a>
+        <a class='data_analysis' href="#">Data Analysis</a>
+    </div>
+    <div class="user"> 
+        <a class='user_log_in' href="#">log in</a>
+        <!--Displays current user-->
+    </div>
+    <!-- <div class="engineer">William Davis</div> -->
+</nav>
+
+
+<div class="centered-content">
+    <div class="search-container">
+        <div class="search-bar">
+            <!-- source for flask plug in https://plainenglish.io/blog/python-flask-passing-data-from-backend-to-html -->
+            <form  class="part-search"  method="post" action="/search_database_for_">
+                <input id="part_id" type="text" name ="part_id">
+                <button type="submit" method="post" >Part Info</button>
+                
+            </form>
+            <form  class="gen-trav"  method="post" action="/gen_traveler_for">
+                <input id="part_id" type="text" name ="part_id">
+                <button type="submit" method="post">Generate Traveler</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <section class="messages">
+        {% for category, msg in messages %}
+        <p class="{{category}}">{{msg}}</p>
+        {% endfor %}
+    </section>
+    {% endif %}
+    {% endwith  %}
+    {% block content %}
+   
+    <div> {{part_num}}</div>
+    <div> {{part_data}}</div>
+
+    {% endblock %}
+    
+    
+</body>
+
+</html>

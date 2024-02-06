@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+{% block content %}
+<p>
+    {{part_data}}
+    <br>
+    <br>
+   
+    <div> {{part_num}}</div>
+    <br>
+    <br>
+    <br>
+    GENERATING TRAVELER:
+    <br>
+    <br>
+    <br>
+    ASSIGNED LOT NUMBER:___________________________ PART QTY:________{{mirror}}CONTRACT___________
+    <br>
+    <br>
+    <br>
+    Material: {{stock}}.  {{material}}. LOT #:___________________________
+    <br>
+    <br>
+    <br>
+    {{fab}}
+    <br>
+    <br>
+    <br>
+    {{form}}
+    <br>
+    <br>
+    <br>
+    {{heat_treat}}
+    <br>
+    <br>
+    <br>
+    {{finish}}
+    <br>
+    <br>
+    <br>
+    QA FINAL INSPECTION, QA STAMP/DATE:___________________________
+    <br>
+    <br>
+    <br>
+    {{mark}}
+    <br>
+    <br>
+    <br>
+
+
+</p>
+
+
+{% endblock %}
