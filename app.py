@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, flash, session, url_for
+from flask import Flask, request, render_template, flash, redirect, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from data_search import find_part, material_flags, finishing_numbers, heat_treat_search, form_tool_search, fabricate, stamp, mirror_t_or_f, find_execption, find_image, inplant
 from data_search_class import DataSearchclass
@@ -21,6 +21,10 @@ def home():
 
     return render_template("index.html")
 
+@app.route('/new_part_entry', methods=['GET', 'POST'])
+def new_part():
+    
+    return render_template('new_part_entry.html')
 
 @app.route('/search_database_for_', methods=['GET', 'POST'])
 def post_data():
@@ -63,6 +67,7 @@ def post_data():
         flash(f"{part_number} was not found in database", 'failure')
         return  render_template(          
         "search.html",
+        image_file= '/images/' + "../images/35-8227-204.jpeg",
         part_num = "",
         part_data="",
         )

@@ -1,5 +1,31 @@
 {% extends 'index.html' %}
 {% block content %}
+<div class="centered-content">
+    <div class="search-container">
+        <div class="search-bar">
+            <!-- source for flask plug in https://plainenglish.io/blog/python-flask-passing-data-from-backend-to-html -->
+            <form  class="part-search"  method="post" action="/search_database_for_">
+                <input id="part_id" type="text" name ="part_id">
+                <button type="submit" method="post" >Part Info</button>
+                
+            </form>
+            <form  class="gen-trav"  method="post" action="/gen_traveler_for">
+                <input id="part_id" type="text" name ="part_id">
+                <button type="submit" method="post">Generate Traveler</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <section class="messages">
+        {% for category, msg in messages %}
+        <p class="{{category}}">{{msg}}</p>
+        {% endfor %}
+    </section>
+    {% endif %}
+    {% endwith  %}
 
 <ul class="return-part">
 {% for key in key_set %}
@@ -17,7 +43,8 @@
 
 {% endif %}
 {% endfor %}
-
+<embed src="url_for('static', filename='\static\images\35-10720-29 & 30 1-26-24 JN.pdf')" width="800px" height="2100px" />
 </ul>
+
 {% endblock %}
 
