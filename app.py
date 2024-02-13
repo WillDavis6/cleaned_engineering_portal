@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, flash, redirect, url_for
+from flask import Flask, request, render_template, flash, session, redirect, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from data_search import find_part, material_flags, finishing_numbers, heat_treat_search, form_tool_search, fabricate, stamp, mirror_t_or_f, find_execption, find_image, inplant
 from data_search_class import DataSearchclass
-
+from image_reading_sand_box import ocr
+from sql_access import PostgresDB, PartDataObj
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret"
@@ -21,63 +22,198 @@ def home():
 
     return render_template("index.html")
 
+
 @app.route('/new_part_entry', methods=['GET', 'POST'])
 def new_part():
+    if request.method == "GET":
+        flash(f"REACHED PAGE", 'success')
+        return render_template("new_part_entry.html")
     
-    return render_template('new_part_entry.html')
+  
+    
+    elif request.method == "POST":
+        print('entered data entry post')
+        db = PostgresDB(
+        dbname="portal_data_base",
+        user="postgres",
+        password="Msi_123",
+        host="",
+        port="5432"
+        )
+        try:
+            db.connect()
+
+            #Create stock size dimension
+            stock_f_string = f"{request.form.get('stock_size_1')} X {request.form.get('stock_size_2')} X {request.form.get('stock_size_3')}"
+
+            #Capture data from form to uploard to table
+            data = {
+            'part_id': request.form.get('part_number'),
+            'part_name': request.form.get('part_name'),
+            'zone_': request.form.get("Zone"),
+            'stock_size': stock_f_string,
+            'material': request.form.get("material"),
+            'heat_treat': request.form.get("heat_treat"),
+            'finish': request.form.get("finish"),
+            'part_mark': request.form.get("part_mark"),
+            'formed': request.form.get("formed"),
+            'tooling': request.form.get("tooling"),
+            'mirror_part': request.form.get("mirror_part"),
+            '"mirror_part_#"': request.form.get("mirror_part_number"),
+            'machined': request.form.get("machined") 
+            }
+
+            success = db.insert_part("parts", data)
+            if success:
+                flash("Part inserted successfully", "success")
+            else:
+                flash("Failed to insert part", "failure")
+        finally:
+            db.disconnect()
+        return redirect(url_for(new_part))
+    
+
+      
+
+
+
+
+
 
 @app.route('/search_database_for_', methods=['GET', 'POST'])
 def post_data():
     #Shows return for search request, should have affiliated screenshots
-    
-    #Extract desired part number from html form
-    part_number = request.form.get("part_id")
-
-    #Create class for target part
-    part = DataSearchclass(part_number)
-
-    #Finds any matching images for the part number
-    images = part.find_image()
-
-    #Extracts specific part dict for part number
-    part_data= part.find_part()
-
-
-    if request.method == "POST" and part_data != None:
-    #if there was a request for part return correlating part info
-        
-        flash(f"Found {part_number} in database", 'success')
-
-        #render_template with part information
-        return  render_template(          
-        "search.html",
-        
-        #inplant is the function for jinja to put an image into html dynamically
-        inplant = inplant,
-        
-        images = images,
-        part_num= part_number,
-        part_data=part_data,
-
-        #key_set is the specific part dict for the searched for part
-        key_set=part_data.keys(),
+    if request.method == "GET":
+        return render_template(
+            "search.html"
         )
-    else:
-        #return if part was not found in database
-        flash(f"{part_number} was not found in database", 'failure')
-        return  render_template(          
-        "search.html",
-        image_file= '/images/' + "../images/35-8227-204.jpeg",
-        part_num = "",
-        part_data="",
+    elif request.method == "POST":
+        #Extract desired part number from html form
+        part_number = request.form.get("part_id")
+        
+        db = PostgresDB(
+                dbname="data",
+                user="None",
+                password="123",
+                host="",
+                port="5432"
+                )
+        try:
+            db.connect()
+
+            #Create object for target part
+            part_data = db.find_part(part_number)
+            print(part_data.get('part_name'))
+
+            #Finds any matching images for the part number
+            # images = part.find_image()
+
+            #Extracts specific part dict for part number
+            # part_data= part.find_part()
+
+            
+            print(part_data)
+            
+            session['part_num'] = part_number
+
+            if part_data != None:
+            #if there was a request for part return correlating part info
+                
+                flash(f"Found {part_number} in database", 'success')
+              
+
+                #render_template with part information
+                return  render_template(          
+                "search.html",
+                
+                #inplant is the function for jinja to put an image into html dynamically
+                # inplant = inplant,
+                
+                # images = images,
+                part_num= part_number,
+                part_data=part_data,
+
+                #key_set is the specific part dict for the searched for part
+                key_set=part_data.keys(),
+                )
+        
+            else:
+                #return if part was not found in database
+                flash(f"{part_number} was not found in database", 'failure')
+                return  render_template(          
+                "search.html",
+                # image_file= '/images/' + "../images/35-8227-204.jpeg",
+                part_num = "",
+                part_data="",
+                )
+            
+        finally:
+            db.disconnect()
+
+
+#NONE SQL DATA ACCESS *****************************************************************************
+
+@app.route('/search_database_for_V0', methods=['GET', 'POST'])
+def post_data_0():
+    #Shows return for search request, should have affiliated screenshots
+    if request.method == "GET":
+        return render_template(
+            "search.html"
         )
-    
+    elif request.method == "POST":
+        #Extract desired part number from html form
+        part_number = request.form.get("part_id")
+        
+
+        #Create class for target part
+        part = DataSearchclass(part_number)
+
+        #Finds any matching images for the part number
+        images = part.find_image()
+
+        #Extracts specific part dict for part number
+        part_data= part.find_part()
+        
+        session['part_num'] = part_number
+
+        if part_data != None:
+        #if there was a request for part return correlating part info
+            
+            flash(f"Found {part_number} in database", 'success')
+
+            #render_template with part information
+            return  render_template(          
+            "search.html",
+            
+            #inplant is the function for jinja to put an image into html dynamically
+            inplant = inplant,
+            
+            images = images,
+            part_num= part_number,
+            part_data=part_data,
+
+            #key_set is the specific part dict for the searched for part
+            key_set=part_data.keys(),
+            )
+      
+        else:
+            #return if part was not found in database
+            flash(f"{part_number} was not found in database", 'failure')
+            return  render_template(          
+            "search.html",
+            image_file= '/images/' + "../images/35-8227-204.jpeg",
+            part_num = "",
+            part_data="",
+            )
+
+
+#****************************************************************************************    
 
 
 @app.route('/gen_traveler_for', methods=['GET', 'POST'])
 def gen_trav():
     #Automatically filles required fields needed for word order travelers
-    part_number = request.form.get("part_id")
+    part_number = request.form.get("gen_trav")
     part_data= find_part(part_number)
 
     if request.method == "POST" and part_data != None:
@@ -103,6 +239,16 @@ def gen_trav():
         return render_template(
             "index.html"
         )
+    
+@app.route('/blue_print_ocr', methods = ['GET', 'POST'])
+def convert_text():
+    if request.method== 'GET':
+        ocr = ocr()
+        return render_template(
+            'blue_print_ocr',
+            ocr = ocr
+        )
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
