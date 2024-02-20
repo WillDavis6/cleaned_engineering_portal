@@ -10,7 +10,7 @@
                 
             </form>
             <form  class="gen-trav"  method="post" action="/gen_traveler_for">
-                <input id="part_id" type="text" name ="part_id">
+                <input id="gen_trav" type="text" name ="gen_trav">
                 <button type="submit" method="post">Generate Traveler</button>
             </form>
         </div>
@@ -30,9 +30,6 @@
     {{part_data}}
     <br>
     <br>
-    {% if part_num == "35-8227-204" %}
-    <img src="{{image_file}}" alt="image of correlated blueprint key">
-    {% endif %}
     <div> {{part_num}}</div>
     <br>
     <br>

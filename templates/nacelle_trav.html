@@ -26,27 +26,54 @@
     </section>
     {% endif %}
     {% endwith  %}
+<p>
 
-{% if part_num != "" or part_num != None %}
-<ul class="return-part">
-{% for key in key_set %}
+    <br>
+    <br>
+    <br>
+    GENERATING TRAVELER:
+    <br>
+    <br>
+    <br>
+    ASSIGNED LOT NUMBER:___________________________ PART QTY:________CONTRACT___________
+    <br>
+    <br>
+    <br>
+    Material: {{stock}}.  {{material}}. LOT #:___________________________
+    <br>
+    <br>
+    <br>
+    {{fab}}
+    <br>
+    <br>
+    <br>
+    {{debur_and_blend}}
+    <br>
+    <br>
+    <br>
+    {{heat_treat}}
+    <br>
+    <br>
+    <br>
+    {{check_and_straighten}}
+    <br>
+    <br>
+    {{finish}}
+    <br>
+    <br>
+    <br>
+    GEOMETRIC DEFINITION ON DRAWING IS NOW CONTROLLED BY 3D MODEL. ALL NOTES AND TOLERANCES ON DRAWING AND/OR
+    PARTS LIST ARE STILL APPLICABE. QA FINAL INSPECTION, QA STAMP/DATE:___________________________
+    <br>
+    <br>
+    <br>
+    {{mark}}
+    <br>
+    <br>
+    <br>
 
-    <li class ="return-data">{{key}}: {{part_data.get(key)}}</li>
 
-{% endfor %}
-{% for img in images %}
-{% if 'KEY' in strimg%}
-<img src="{{inplant(img)}}">
-<li>{{img}}</li>
-{% else %}
-<img src="{{inplant(img)}}">
-<li>{{img}}</li>
+</p>
 
-{% endif %}
-{% endfor %}
-
-</ul>
-{% endif %}
 
 {% endblock %}
-
